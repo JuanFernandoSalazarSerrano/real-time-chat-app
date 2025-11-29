@@ -1,5 +1,6 @@
 package com.vmsecca.springboot.backend.chat;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -8,22 +9,30 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+
 public class webSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-	@Override
-	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		// /portfolio is the HTTP URL for the endpoint to which a WebSocket (or SockJS)
-		// client needs to connect for the WebSocket handshake
-		registry.addEndpoint("/portfolio");
-	}
+    @Value("${websocket.allowed-origins:http://localhost:4200}")
+    private String allowedOriginsForCors;
 
-	@Override
-	public void configureMessageBroker(MessageBrokerRegistry config) {
-		// STOMP messages whose destination header begins with /app are routed to
-		// @MessageMapping methods in @Controller classes
-		config.setApplicationDestinationPrefixes("/app");
-		// Use the built-in message broker for subscriptions and broadcasting and
-		// route messages whose destination header begins with /topic or /queue to the broker
-		config.enableSimpleBroker("/topic", "/queue");
-	}
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/chat-websocket")
+            .setAllowedOrigins(allowedOriginsForCors.split(","))
+            .withSockJS();
+    }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+
+        // STOMP messages whose destination header begins with /app are routed to
+        // @MessageMapping methods in @Controller classes
+
+        config.setApplicationDestinationPrefixes("/app");
+
+        // Use the built-in message broker for subscriptions and broadcasting and
+        // route messages whose destination header begins with /topic or /queue to the broker
+        
+        config.enableSimpleBroker("/topic/"); // path-like strings where /topic/.. implies publish-subscribe (one-to-many)
+    }
 }
