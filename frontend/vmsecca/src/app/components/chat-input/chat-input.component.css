@@ -1,0 +1,23 @@
+:host {
+  display: block;
+}
+
+/* Remove browser default styles for input */
+input:focus {
+  outline: none;
+}
+
+/* Tactical cursor blink */
+input::placeholder {
+  animation: placeholderBlink 2s infinite;
+}
+
+@keyframes placeholderBlink {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

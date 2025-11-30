@@ -9,6 +9,7 @@ export interface Message {
   status: MessageStatus;
 }
 
+
 /**
  * Lightweight class wrapper for Message with helpers for creation/serialization.
  */
@@ -46,6 +47,6 @@ export class MessageModel implements Message {
       status: (obj as any).status,
     });
   }
-
-
 }
+
+

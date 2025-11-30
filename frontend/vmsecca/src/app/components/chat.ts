@@ -8,8 +8,7 @@ import { ChatHeaderComponent } from './chat-header/chat-header.component';
 import { ChatInputComponent } from './chat-input/chat-input.component';
 import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
 import { MessageModel } from '../models/Message';
-
-
+import { testMessage } from '../data/testmessage';
 
 @Component({
   selector: 'app-chat',
@@ -20,66 +19,16 @@ import { MessageModel } from '../models/Message';
 
 export class Chat implements OnInit {
 
-    messages = signal<MessageModel[]>([
-    {
-      id: "1",
-      content: "SECURE CHANNEL ESTABLISHED. AWAITING INSTRUCTIONS.",
-      sender: "agent",
-      timestamp: new Date(Date.now() - 300000),
-      status: "read",
-    },
-    {
-      id: "2",
-      content: "Status report requested.",
-      sender: "user",
-      timestamp: new Date(Date.now() - 240000),
-      status: "delivered",
-    },
-    {
-      id: "3",
-      content: "ALL SYSTEMS OPERATIONAL. READY FOR DEPLOYMENT.",
-      sender: "agent",
-      timestamp: new Date(Date.now() - 180000),
-      status: "read",
-    },
-  ])
-
-  isConnected = signal<boolean>(true)
-  isTyping = signal<boolean>(false)
-
-  onSendMessage(content: string): void {
-    const newMessage: MessageModel = {
-      id: Date.now().toString(),
-      content,
-      sender: "user",
-      timestamp: new Date(),
-      status: "sent",
-    }
-
-    this.messages.update((msgs) => [...msgs, newMessage])
-
-    // Simulate agent typing and response
-    this.isTyping.set(true)
-    setTimeout(() => {
-      this.isTyping.set(false)
-      const agentResponse: MessageModel = {
-        id: (Date.now() + 1).toString(),
-        content: "MESSAGE RECEIVED. PROCESSING REQUEST...",
-        sender: "agent",
-        timestamp: new Date(),
-        status: "read",
-      }
-      this.messages.update((msgs) => [...msgs, agentResponse])
-    }, 2000)
-  }
-
-  onToggleConnection(): void {
-    this.isConnected.update((status) => !status)
-  }
-
   private client: Client = new Client();
 
+  readonly isConnected = signal<boolean>(false)
+
+  message = signal<MessageModel>(testMessage)
+
+  listOfMessages = signal<MessageModel[]>([])
+
   constructor() {}
+
 
   ngOnInit(): void {
 
@@ -88,7 +37,7 @@ export class Chat implements OnInit {
     }
 
     this.listenConnections()
-    // this.startConnection()
+    this.startConnection()
 
 
   this.client.onStompError = (frame) => {
@@ -101,9 +50,22 @@ export class Chat implements OnInit {
   listenConnections() {
     // frame object contains all the information of our connection with our broker
     try {
+
       this.client.onConnect = (frames) => {
-        console.log('Powered' + this.client.connected + ':' + frames);
+        console.log('Powered: ' + this.client.connected + ':' + frames);
+        this.isConnected.set(true);
+
+
+        // subscribe to chat event
+
+        this.client.subscribe('chat')
       };
+
+      this.client.onDisconnect = (frames) => {
+        console.log('Disonnected: ' + !this.client.connected + ':' + frames);
+        this.isConnected.set(false);
+      };
+
     } catch (error) {
       console.error('Error in connection:', error);
     }
@@ -112,9 +74,76 @@ export class Chat implements OnInit {
   startConnection(){
     try {
       this.client.activate();
+      this.onToggleConnection()
     } catch (error) {
         console.error('Error activating client:', error);
     }
   }
+
+  stopConnection(){
+    try {
+      this.client.deactivate();
+      this.onToggleConnection()
+    } catch (error) {
+        console.error('Error deactivating client:', error, 'We strongly recommend turning off the machine');
+    }
+  }
+
+  onToggleConnection(): void {
+    this.isConnected.update((status) => !status)
+  }
+
+
+    //   messages = signal<MessageModel[]>([
+  //   {
+  //     id: "1",
+  //     content: "SECURE CHANNEL ESTABLISHED. AWAITING INSTRUCTIONS.",
+  //     sender: "agent",
+  //     timestamp: new Date(Date.now() - 300000),
+  //     status: "read",
+  //   },
+  //   {
+  //     id: "2",
+  //     content: "Status report requested.",
+  //     sender: "user",
+  //     timestamp: new Date(Date.now() - 240000),
+  //     status: "delivered",
+  //   },
+  //   {
+  //     id: "3",
+  //     content: "ALL SYSTEMS OPERATIONAL. READY FOR DEPLOYMENT.",
+  //     sender: "agent",
+  //     timestamp: new Date(Date.now() - 180000),
+  //     status: "read",
+  //   },
+  // ])
+
+  // isTyping = signal<boolean>(false)
+
+  // onSendMessage(content: string): void {
+  //   const newMessage: MessageModel = {
+  //     id: Date.now().toString(),
+  //     content,
+  //     sender: "user",
+  //     timestamp: new Date(),
+  //     status: "sent",
+  //   }
+
+  //   this.messages.update((msgs) => [...msgs, newMessage])
+
+  //   // Simulate agent typing and response
+  //   this.isTyping.set(true)
+  //   setTimeout(() => {
+  //     this.isTyping.set(false)
+  //     const agentResponse: MessageModel = {
+  //       id: (Date.now() + 1).toString(),
+  //       content: "MESSAGE RECEIVED. PROCESSING REQUEST...",
+  //       sender: "agent",
+  //       timestamp: new Date(),
+  //       status: "read",
+  //     }
+  //     this.messages.update((msgs) => [...msgs, agentResponse])
+  //   }, 2000)
+  // }
 
 }

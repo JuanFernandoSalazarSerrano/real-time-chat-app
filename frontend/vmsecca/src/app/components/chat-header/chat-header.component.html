@@ -26,15 +26,19 @@
     </div>
 
     <!-- Right: Disconnect Button -->
-    <button 
-      (click)="onDisconnect()"
-      class="text-white font-mono text-xs uppercase tracking-widest px-4 py-2 border border-zinc-700 hover:border-red-500 hover:text-red-500 transition-colors"
-    >
-      @if (isConnected) {
+    @if (isConnected) {
+      <button
+        (click)="onDisconnect()"
+        class="text-white font-mono text-xs uppercase tracking-widest px-4 py-2 border border-zinc-700 hover:border-red-500 hover:text-red-500 transition-colors">
         DISCONNECT
-      } @else {
-        RECONNECT
+      </button>
       }
-    </button>
+      @else {
+      <button
+        (click)="onDisconnect()"
+        class="text-white font-mono text-xs uppercase tracking-widest px-4 py-2 border border-zinc-700 hover:border-blue-500 hover:text-blue-500 transition-colors">
+        RECONNECT
+      </button>
+      }
   </div>
 </header>
