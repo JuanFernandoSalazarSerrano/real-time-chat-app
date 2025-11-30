@@ -28,19 +28,18 @@
               }
             </span>
             <span class="text-zinc-600 font-mono text-xs">
-              {{ message.timestamp | date:'HH:mm:ss' }}
+              {{ message.date | date:'HH:mm:ss' }}
             </span>
           </div>
 
           <!-- Message Content -->
           <div
             class="font-mono text-sm px-4 py-3"
-            [ngClass]="{
-              'bg-zinc-900 text-white border-l-2 border-green-500': message.sender === 'agent',
-              'bg-zinc-800 text-white border-r-2 border-white text-right': message.sender === 'user'
-            }"
+
           >
-            {{ message.content }}
+          <span
+          class="text-amber-300"
+          > {{ message.text }}</span>
           </div>
         </div>
       </div>

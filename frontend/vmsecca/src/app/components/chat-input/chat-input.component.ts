@@ -9,13 +9,16 @@ import { FormsModule } from "@angular/forms"
   templateUrl: "./chat-input.component.html",
 })
 export class ChatInputComponent {
+
   @Input() disabled = false
   @Output() sendMessage = new EventEmitter<string>()
 
   messageContent = signal<string>("")
 
   onSend(): void {
-    const content = this.messageContent().trim()
+
+    const content = this.messageContent().trim() // clean for trailing
+
     if (content && !this.disabled) {
       this.sendMessage.emit(content)
       this.messageContent.set("")

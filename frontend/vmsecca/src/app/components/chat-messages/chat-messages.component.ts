@@ -9,6 +9,7 @@ import { MessageModel } from "../../models/Message"
   templateUrl: "./chat-messages.component.html",
 })
 export class ChatMessagesComponent implements AfterViewChecked {
+
   @Input() messages: MessageModel[] = []
   @Input() isTyping = false
   @ViewChild("messagesContainer") private messagesContainer!: ElementRef
@@ -23,7 +24,7 @@ export class ChatMessagesComponent implements AfterViewChecked {
         this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight
       }
     } catch (err) {
-      console.error("[v0] Scroll error:", err)
+      console.error("Scroll error:", err)
     }
   }
 }

@@ -5,15 +5,16 @@
     (toggleConnection)="onToggleConnection()"
   />
 
-  <!-- <app-chat-messages
-    [messages]="messages()"
+  <app-chat-messages
+    [messages]="listOfMessages()"
     [isTyping]="isTyping()"
   />
 
   <app-chat-input
+  class="fixed bottom-0 left-0 right-0 w-full"
     [disabled]="!isConnected()"
     (sendMessage)="onSendMessage($event)"
-  /> -->
+  />
 </div>
 
 <h1 class="text-3xl font-bold underline">

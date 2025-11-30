@@ -27,8 +27,10 @@ export class Chat implements OnInit {
 
   listOfMessages = signal<MessageModel[]>([])
 
-  constructor() {}
+  isTyping = signal<boolean>(false)
 
+
+  constructor() {}
 
   ngOnInit(): void {
 
@@ -42,10 +44,11 @@ export class Chat implements OnInit {
 
   this.client.onStompError = (frame) => {
     console.error('Broker reported error: ' + frame.headers['message'] + '\n' + frame.body);
-  };
-
-
+    };
   }
+
+
+  /* ALL THE FUNCTIONS RELATED TO CONNECTIONS */
 
   listenConnections() {
     // frame object contains all the information of our connection with our broker
@@ -55,10 +58,18 @@ export class Chat implements OnInit {
         console.log('Powered: ' + this.client.connected + ':' + frames);
         this.isConnected.set(true);
 
-
         // subscribe to chat event
 
-        this.client.subscribe('chat')
+        this.client.subscribe('/topic/message', (event) => {
+
+          let message: MessageModel = JSON.parse(event.body) as MessageModel;
+          // this.listOfMessages.set([...this.listOfMessages(), message])
+          console.log(event)
+          this.listOfMessages().push(message)
+
+          console.log('03949')
+
+        }) //broker recieves this message and sends it to all the connected users
       };
 
       this.client.onDisconnect = (frames) => {
@@ -94,6 +105,16 @@ export class Chat implements OnInit {
   }
 
 
+  /* ALL THE FUNCTIONS RELATED TO MESSAGES */
+
+
+  onSendMessage(messageContent: string): void {
+    console.log( '1: ', JSON.stringify(messageContent), '2: ', messageContent )
+this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: messageContent }) });
+
+  }
+
+
     //   messages = signal<MessageModel[]>([
   //   {
   //     id: "1",
@@ -118,16 +139,6 @@ export class Chat implements OnInit {
   //   },
   // ])
 
-  // isTyping = signal<boolean>(false)
-
-  // onSendMessage(content: string): void {
-  //   const newMessage: MessageModel = {
-  //     id: Date.now().toString(),
-  //     content,
-  //     sender: "user",
-  //     timestamp: new Date(),
-  //     status: "sent",
-  //   }
 
   //   this.messages.update((msgs) => [...msgs, newMessage])
 
