@@ -1,0 +1,72 @@
+<div #messagesContainer class="flex-1 overflow-y-auto bg-zinc-950 px-6 py-8 scroll-smooth">
+  <div class="max-w-4xl mx-auto space-y-6">
+      <div class="flex flex-col items-center justify-center h-full text-center">
+        <div class="text-zinc-600 font-mono text-sm uppercase tracking-widest mb-2">
+          [ AWAITING TRANSMISSION ]
+        </div>
+        <div class="text-zinc-700 font-mono text-xs">
+          No messages in secure channel
+        </div>
+      </div>
+
+    @for (message of messages; track message.id) {
+      <div class="flex" [class.justify-end]="message.sender === 'user'">
+        <div
+          class="max-w-2xl"
+          [class.w-full]="message.sender === 'agent'"
+        >
+          <!-- Message Header -->
+          <div
+            class="flex items-center gap-2 mb-2"
+            [class.justify-end]="message.sender === 'user'"
+          >
+            <span class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
+              @if (message.sender === 'agent') {
+                [ AGENT ]
+              } @else {
+                [ USER ]
+              }
+            </span>
+            <span class="text-zinc-600 font-mono text-xs">
+              {{ message.timestamp | date:'HH:mm:ss' }}
+            </span>
+          </div>
+
+          <!-- Message Content -->
+          <div
+            class="font-mono text-sm px-4 py-3"
+            [ngClass]="{
+              'bg-zinc-900 text-white border-l-2 border-green-500': message.sender === 'agent',
+              'bg-zinc-800 text-white border-r-2 border-white text-right': message.sender === 'user'
+            }"
+          >
+            {{ message.content }}
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Typing Indicator -->
+    @if (isTyping) {
+      <div class="flex">
+        <div class="max-w-2xl w-full">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
+              [ AGENT ]
+            </span>
+            <span class="text-green-500 font-mono text-xs animate-pulse">
+              TYPING...
+            </span>
+          </div>
+          <div class="bg-zinc-900 text-white border-l-2 border-green-500 font-mono text-sm px-4 py-3">
+            <div class="flex gap-1">
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+              <span class="w-2 h-2 bg-green-500 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

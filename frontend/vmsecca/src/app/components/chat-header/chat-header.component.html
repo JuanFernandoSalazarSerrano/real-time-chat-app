@@ -1,0 +1,40 @@
+<header class="bg-black border-b border-zinc-800 px-6 py-4">
+  <div class="flex items-center justify-between">
+    <!-- Left: Status Indicator -->
+    <div class="flex items-center gap-4">
+      @if (isConnected) {
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-green-500 font-mono text-xs uppercase tracking-widest">SECURE CONNECTION</span>
+        </div>
+      } @else {
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+          <span class="text-red-500 font-mono text-xs uppercase tracking-widest">DISCONNECTED</span>
+        </div>
+      }
+    </div>
+
+    <!-- Center: Session Info -->
+    <div class="flex items-center gap-6">
+      <div class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
+        SESSION ID: <span class="text-white">{{ 'AX-' + (currentTime.getTime() % 100000) }}</span>
+      </div>
+      <div class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
+        TIME: <span class="text-white">{{ currentTime | date:'HH:mm:ss' }}</span>
+      </div>
+    </div>
+
+    <!-- Right: Disconnect Button -->
+    <button 
+      (click)="onDisconnect()"
+      class="text-white font-mono text-xs uppercase tracking-widest px-4 py-2 border border-zinc-700 hover:border-red-500 hover:text-red-500 transition-colors"
+    >
+      @if (isConnected) {
+        DISCONNECT
+      } @else {
+        RECONNECT
+      }
+    </button>
+  </div>
+</header>

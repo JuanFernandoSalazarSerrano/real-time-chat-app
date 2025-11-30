@@ -1,0 +1,120 @@
+import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Client } from '@stomp/stompjs';
+import SocksJS from 'sockjs-client';
+import { URL_WEBSOCKET } from './env';
+import { CommonModule } from "@angular/common"
+import { ChatHeaderComponent } from './chat-header/chat-header.component';
+import { ChatInputComponent } from './chat-input/chat-input.component';
+import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
+import { MessageModel } from '../models/Message';
+
+
+
+@Component({
+  selector: 'app-chat',
+  imports: [FormsModule, CommonModule, ChatHeaderComponent,ChatInputComponent, ChatMessagesComponent],
+  templateUrl: './chat.html',
+  styleUrls: ["../../styles.css"],
+})
+
+export class Chat implements OnInit {
+
+    messages = signal<MessageModel[]>([
+    {
+      id: "1",
+      content: "SECURE CHANNEL ESTABLISHED. AWAITING INSTRUCTIONS.",
+      sender: "agent",
+      timestamp: new Date(Date.now() - 300000),
+      status: "read",
+    },
+    {
+      id: "2",
+      content: "Status report requested.",
+      sender: "user",
+      timestamp: new Date(Date.now() - 240000),
+      status: "delivered",
+    },
+    {
+      id: "3",
+      content: "ALL SYSTEMS OPERATIONAL. READY FOR DEPLOYMENT.",
+      sender: "agent",
+      timestamp: new Date(Date.now() - 180000),
+      status: "read",
+    },
+  ])
+
+  isConnected = signal<boolean>(true)
+  isTyping = signal<boolean>(false)
+
+  onSendMessage(content: string): void {
+    const newMessage: MessageModel = {
+      id: Date.now().toString(),
+      content,
+      sender: "user",
+      timestamp: new Date(),
+      status: "sent",
+    }
+
+    this.messages.update((msgs) => [...msgs, newMessage])
+
+    // Simulate agent typing and response
+    this.isTyping.set(true)
+    setTimeout(() => {
+      this.isTyping.set(false)
+      const agentResponse: MessageModel = {
+        id: (Date.now() + 1).toString(),
+        content: "MESSAGE RECEIVED. PROCESSING REQUEST...",
+        sender: "agent",
+        timestamp: new Date(),
+        status: "read",
+      }
+      this.messages.update((msgs) => [...msgs, agentResponse])
+    }, 2000)
+  }
+
+  onToggleConnection(): void {
+    this.isConnected.update((status) => !status)
+  }
+
+  private client: Client = new Client();
+
+  constructor() {}
+
+  ngOnInit(): void {
+
+    this.client.webSocketFactory = () => {
+      return new SocksJS(`${URL_WEBSOCKET}/chat-websocket`);
+    }
+
+    this.listenConnections()
+    // this.startConnection()
+
+
+  this.client.onStompError = (frame) => {
+    console.error('Broker reported error: ' + frame.headers['message'] + '\n' + frame.body);
+  };
+
+
+  }
+
+  listenConnections() {
+    // frame object contains all the information of our connection with our broker
+    try {
+      this.client.onConnect = (frames) => {
+        console.log('Powered' + this.client.connected + ':' + frames);
+      };
+    } catch (error) {
+      console.error('Error in connection:', error);
+    }
+  }
+
+  startConnection(){
+    try {
+      this.client.activate();
+    } catch (error) {
+        console.error('Error activating client:', error);
+    }
+  }
+
+}

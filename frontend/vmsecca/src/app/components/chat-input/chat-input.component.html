@@ -1,0 +1,50 @@
+<div class="bg-black border-t border-zinc-800 px-6 py-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex gap-4">
+      <!-- Input Field -->
+      <div class="flex-1 relative">
+        <input
+          type="text"
+          [(ngModel)]="messageContent"
+          (keypress)="onKeyPress($event)"
+          [disabled]="disabled"
+          placeholder="ENTER SECURE MESSAGE..."
+          class="w-full bg-zinc-900 text-white font-mono text-sm px-4 py-3 border border-zinc-700 focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 placeholder-zinc-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        />
+        @if (messageContent().length > 0) {
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 font-mono text-xs">
+            {{ messageContent().length }}/500
+          </div>
+        }
+      </div>
+
+      <!-- Send Button -->
+      <button
+        (click)="onSend()"
+        [disabled]="disabled || messageContent().trim().length === 0"
+        class="bg-white text-black font-mono text-xs uppercase tracking-widest px-8 py-3 border-2 border-white hover:bg-green-500 hover:border-green-500 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-white transition-all"
+      >
+        <span class="flex items-center gap-2">
+          SEND
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="mt-3 flex items-center justify-between text-xs font-mono text-zinc-600">
+      <div class="flex items-center gap-4">
+        @if (disabled) {
+          <span class="text-red-500">[ CONNECTION REQUIRED ]</span>
+        } @else {
+          <span class="text-green-500">[ SECURE CHANNEL ACTIVE ]</span>
+        }
+      </div>
+      <div>
+        ENCRYPTION: AES-256
+      </div>
+    </div>
+  </div>
+</div>
