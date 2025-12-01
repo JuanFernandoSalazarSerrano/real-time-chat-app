@@ -9,22 +9,22 @@
         </div>
       </div>
 
-    @for (message of messages; track message.id) {
+    @for (message of messages; track $index) {
       <div class="flex" [class.justify-end]="message.sender === 'user'">
         <div
           class="max-w-2xl"
-          [class.w-full]="message.sender === 'agent'"
+          [class.w-full]="message.sender === 'BROKER'"
         >
           <!-- Message Header -->
           <div
             class="flex items-center gap-2 mb-2"
-            [class.justify-end]="message.sender === 'user'"
+            [class.justify-end]="message.sender === 'BROKER'"
           >
             <span class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
-              @if (message.sender === 'agent') {
-                [ AGENT ]
+              @if (message.sender === 'BROKER') {
+                [ BROKER ]
               } @else {
-                [ USER ]
+                [ {{message.sender}} ]
               }
             </span>
             <span class="text-zinc-600 font-mono text-xs">
@@ -33,14 +33,24 @@
           </div>
 
           <!-- Message Content -->
-          <div
-            class="font-mono text-sm px-4 py-3"
+          @if(message.type === 'NEW_USER_CONNECTION') {
+            <div class="relative font-mono text-sm px-4 py-3">
+              <!-- Top-left corner -->
+              <div class="absolute top-0 left-0 text-amber-300 text-lg leading-none">┌─</div>
+              <!-- Top-right corner -->
+              <div class="absolute top-0 right-0 text-amber-300 text-lg leading-none">─┐</div>
+              <!-- Bottom-left corner -->
+              <div class="absolute bottom-0 left-0 text-amber-300 text-lg leading-none">└─</div>
+              <!-- Bottom-right corner -->
+              <div class="absolute bottom-0 right-0 text-amber-300 text-lg leading-none">─┘</div>
+              <span class="text-amber-300"> {{ message.text }}</span>
+            </div>
+          } @else {
+            <div class="font-mono text-sm px-4 py-3">
+              <span class="text-amber-300"> {{ message.text }}</span>
+            </div>
+          }
 
-          >
-          <span
-          class="text-amber-300"
-          > {{ message.text }}</span>
-          </div>
         </div>
       </div>
     }
@@ -51,7 +61,7 @@
         <div class="max-w-2xl w-full">
           <div class="flex items-center gap-2 mb-2">
             <span class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
-              [ AGENT ]
+              [ BROKER ]
             </span>
             <span class="text-green-500 font-mono text-xs animate-pulse">
               TYPING...

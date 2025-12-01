@@ -1,8 +1,7 @@
 export class MessageModel {
-  id: string = ''
   text: string = ''
+  date: number = Date.now()
   sender: string = ''
-  date: Date = new Date()
-  type: string = '';
+  type: string = 'NEW_USER_CONNECTION';
 }
 

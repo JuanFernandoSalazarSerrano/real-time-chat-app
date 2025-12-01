@@ -63,13 +63,10 @@ export class Chat implements OnInit {
         this.allertBrokerNewUser();
 
         // subscribe to chat event
-
         this.client.subscribe('/topic/message', (event) => {
 
           let message: MessageModel = JSON.parse(event.body) as MessageModel;
-          // this.listOfMessages.set([...this.listOfMessages(), message])
-          console.log(event)
-          this.listOfMessages().push(message)
+          this.listOfMessages.set([...this.listOfMessages(), message])
 
         }) //broker recieves this message and sends it to all the connected users
 
@@ -114,15 +111,16 @@ export class Chat implements OnInit {
 
 
   onSendMessage(messageContent: string): void {
-
+    this.message().text = messageContent
     this.message().type = 'NEW_MESSAGE'
-    this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: messageContent }) });
-
+    this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
 
-  private allertBrokerNewUser() {
+  private allertBrokerNewUser(): void {
+    this.message.set({...this.message(), sender: this.SharingDataService.sender()})
     this.message().type = 'NEW_USER_CONNECTION';
-    this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: this.SharingDataService.sender() }) });
+    console.log(this.message())
+    this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
 
 
