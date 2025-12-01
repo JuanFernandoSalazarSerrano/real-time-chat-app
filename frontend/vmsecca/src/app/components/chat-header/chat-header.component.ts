@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core"
+import { Component, Input, Output, EventEmitter, signal, OnInit, effect } from "@angular/core"
 import { CommonModule } from "@angular/common"
+import { SharingData } from "../../services/sharing-data"
 
 @Component({
   selector: "app-chat-header",
@@ -9,18 +10,21 @@ import { CommonModule } from "@angular/common"
 })
 export class ChatHeaderComponent {
 
-  @Input() sender = 'error!'
+  @Input() sender = signal<string>('a');
   @Input() isConnected = false
   @Output() toggleConnection = new EventEmitter<void>()
 
+  constructor(private readonly SharingDataService: SharingData){
+
+  effect(() => {
+    console.log('sender changed:', this.SharingDataService.sender());
+    this.sender.set(this.SharingDataService.sender());
+    }
+  );
+}
+
   currentTime = new Date()
 
-  ngOnInit(): void {
-    // Update time every second
-    setInterval(() => {
-      this.currentTime = new Date()
-    }, 1000)
-  }
 
   onDisconnect(): void {
     this.toggleConnection.emit()

@@ -1,3 +1,4 @@
+import { SharingData } from './../services/sharing-data';
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Client } from '@stomp/stompjs';
@@ -30,7 +31,7 @@ export class Chat implements OnInit {
   isTyping = signal<boolean>(false)
 
 
-  constructor() {}
+  constructor(private readonly SharingDataService: SharingData) {}
 
   ngOnInit(): void {
 
@@ -58,6 +59,9 @@ export class Chat implements OnInit {
         console.log('Powered: ' + this.client.connected + ':' + frames);
         this.isConnected.set(true);
 
+        // send message to broker onConnect to all users of new user connection to the chat
+        this.allertBrokerNewUser();
+
         // subscribe to chat event
 
         this.client.subscribe('/topic/message', (event) => {
@@ -68,6 +72,8 @@ export class Chat implements OnInit {
           this.listOfMessages().push(message)
 
         }) //broker recieves this message and sends it to all the connected users
+
+
       };
 
       this.client.onDisconnect = (frames) => {
@@ -79,6 +85,7 @@ export class Chat implements OnInit {
       console.error('Error in connection:', error);
     }
   }
+
 
   startConnection(){
     try {
@@ -107,10 +114,17 @@ export class Chat implements OnInit {
 
 
   onSendMessage(messageContent: string): void {
-    console.log( '1: ', JSON.stringify(messageContent), '2: ', messageContent )
-this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: messageContent }) });
+
+    this.message().type = 'NEW_MESSAGE'
+    this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: messageContent }) });
 
   }
+
+  private allertBrokerNewUser() {
+    this.message().type = 'NEW_USER_CONNECTION';
+    this.client.publish({ destination: '/app/message', body: JSON.stringify({ text: this.SharingDataService.sender() }) });
+  }
+
 
 
     //   messages = signal<MessageModel[]>([
