@@ -67,8 +67,6 @@ export class Chat implements OnInit {
           console.log(event)
           this.listOfMessages().push(message)
 
-          console.log('03949')
-
         }) //broker recieves this message and sends it to all the connected users
       };
 

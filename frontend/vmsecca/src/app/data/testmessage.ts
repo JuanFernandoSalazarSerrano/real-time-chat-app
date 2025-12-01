@@ -4,5 +4,6 @@ export const testMessage: MessageModel = {
     id: 'noid',
     text: 'nocontent',
     sender: 'system',
-    date: new Date()
+    date: new Date(),
+    type: ''
   }

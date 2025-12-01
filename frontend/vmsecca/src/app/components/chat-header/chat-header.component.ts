@@ -8,6 +8,8 @@ import { CommonModule } from "@angular/common"
   templateUrl: "./chat-header.component.html",
 })
 export class ChatHeaderComponent {
+
+  @Input() sender = 'error!'
   @Input() isConnected = false
   @Output() toggleConnection = new EventEmitter<void>()
 

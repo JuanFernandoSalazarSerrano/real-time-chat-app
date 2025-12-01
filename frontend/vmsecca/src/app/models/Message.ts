@@ -3,5 +3,6 @@ export class MessageModel {
   text: string = ''
   sender: string = ''
   date: Date = new Date()
+  type: string = '';
 }
 

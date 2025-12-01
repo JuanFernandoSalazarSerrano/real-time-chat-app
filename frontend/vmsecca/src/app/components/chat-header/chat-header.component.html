@@ -5,7 +5,9 @@
       @if (isConnected) {
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span class="text-green-500 font-mono text-xs uppercase tracking-widest">SECURE CONNECTION</span>
+          <span class="text-green-500 font-mono text-xs tracking-widest">SECURE CONNECTION as:</span>
+          <span class="text-amber-300 font-mono text-xs uppercase italic tracking-widest">{{sender}}</span>
+
         </div>
       } @else {
         <div class="flex items-center gap-2">
