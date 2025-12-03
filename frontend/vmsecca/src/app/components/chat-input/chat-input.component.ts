@@ -12,6 +12,7 @@ export class ChatInputComponent {
 
   @Input() disabled = false
   @Output() sendMessage = new EventEmitter<string>()
+  @Output() userTyping = new EventEmitter<boolean>()
 
   messageContent = signal<string>("")
 
@@ -31,4 +32,9 @@ export class ChatInputComponent {
       this.onSend()
     }
   }
+
+  typingEvent(){
+    this.userTyping.emit()
+  }
+
 }

@@ -1,6 +1,7 @@
-import { Component, Input, type ElementRef, ViewChild, type AfterViewChecked } from "@angular/core"
+import { Component, Input, type ElementRef, ViewChild, type AfterViewChecked, signal, effect } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { MessageModel } from "../../models/Message"
+import { SharingData } from "../../services/sharing-data";
 
 @Component({
   selector: "app-chat-messages",
@@ -8,10 +9,11 @@ import { MessageModel } from "../../models/Message"
   imports: [CommonModule],
   templateUrl: "./chat-messages.component.html",
 })
-export class ChatMessagesComponent implements AfterViewChecked {
+export class ChatMessagesComponent{
 
+  @Input() sender = signal<string>('');
   @Input() messages: MessageModel[] = []
-  @Input() isTyping = false
+  @Input() isTyping = ''
   @ViewChild("messagesContainer") private messagesContainer!: ElementRef
 
   // Safe color palette using Tailwind 300 colors (bright enough for black background)
@@ -39,6 +41,15 @@ export class ChatMessagesComponent implements AfterViewChecked {
     // zinc will be system color (the BROKER color)
   }
 
+    constructor(private readonly SharingDataService: SharingData){
+
+  effect(() => {
+    console.log('sender changed:', this.SharingDataService.sender());
+    this.sender.set(this.SharingDataService.sender());
+    }
+  );
+}
+
 
 
   getMessageColor(color?: string): string {
@@ -48,19 +59,5 @@ export class ChatMessagesComponent implements AfterViewChecked {
 
     const normalizedColor = color.toLowerCase().trim()
     return this.SAFE_COLORS[normalizedColor] || this.SAFE_COLORS['amber']
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottom()
-  }
-
-  private scrollToBottom(): void {
-    try {
-      if (this.messagesContainer) {
-        this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight
-      }
-    } catch (err) {
-      console.error("Scroll error:", err)
-    }
   }
 }

@@ -28,7 +28,7 @@ export class Chat implements OnInit {
 
   listOfMessages = signal<MessageModel[]>([])
 
-  isTyping = signal<boolean>(false)
+  isTyping = signal<string>('')
 
 
   constructor(private readonly SharingDataService: SharingData) {}
@@ -83,7 +83,18 @@ export class Chat implements OnInit {
 
 
 
-        }) //broker recieves this message and sends it to all the connected users
+        }
+      ) //broker recieves this message and sends it to all the connected users
+
+      this.client.subscribe('/topic/typing', (event) => {
+
+        const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
+
+        this.isTyping.set(event.body);
+        this.SharingDataService.sender.set(messageFromEvent.sender);
+        setTimeout(() => {this.isTyping.set('')}, 4000)
+
+      })
 
 
       };
@@ -121,7 +132,7 @@ export class Chat implements OnInit {
     this.isConnected.update((status) => !status)
   }
 
-  /* ALL THE FUNCTIONS RELATED TO MESSAGES */
+  /* ALL THE FUNCTIONS RELATED TO MESSAGES OR SENDING MESSAGES TO THE BROKER */
 
   onSendMessage(messageContent: string): void {
     this.message().text = messageContent
@@ -135,22 +146,7 @@ export class Chat implements OnInit {
     this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
 
-
-  //   this.messages.update((msgs) => [...msgs, newMessage])
-
-  //   // Simulate agent typing and response
-  //   this.isTyping.set(true)
-  //   setTimeout(() => {
-  //     this.isTyping.set(false)
-  //     const agentResponse: MessageModel = {
-  //       id: (Date.now() + 1).toString(),
-  //       content: "MESSAGE RECEIVED. PROCESSING REQUEST...",
-  //       sender: "agent",
-  //       timestamp: new Date(),
-  //       status: "read",
-  //     }
-  //     this.messages.update((msgs) => [...msgs, agentResponse])
-  //   }, 2000)
-  // }
-
+  allertBrokerUserTyping(): void{
+    this.client.publish({ destination: '/app/typing', body: JSON.stringify(this.message())});
+  }
 }
