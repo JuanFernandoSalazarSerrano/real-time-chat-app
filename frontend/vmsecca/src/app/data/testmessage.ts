@@ -4,5 +4,6 @@ export const testMessage: MessageModel = {
     text: 'nocontent',
     sender: 'system',
     date: Date.now(),
-    type: ''
+    type: 'notype',
+    color: 'nocolor'
   }

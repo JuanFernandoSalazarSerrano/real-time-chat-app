@@ -48,7 +48,6 @@ export class Chat implements OnInit {
     };
   }
 
-
   /* ALL THE FUNCTIONS RELATED TO CONNECTIONS */
 
   listenConnections() {
@@ -65,8 +64,24 @@ export class Chat implements OnInit {
         // subscribe to chat event
         this.client.subscribe('/topic/message', (event) => {
 
-          let message: MessageModel = JSON.parse(event.body) as MessageModel;
-          this.listOfMessages.set([...this.listOfMessages(), message])
+          const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
+
+          //We want to work with our angular version of the message, not with what springboot directly gives us, so:
+          // this.message.set(messageFromEvent);
+
+          // assign color to new user (the message of the new user)
+          if(messageFromEvent.type == 'NEW_USER_CONNECTION'
+            && this.SharingDataService.sender() == messageFromEvent.sender){
+
+              this.message.set({...this.message(), color: messageFromEvent.color})
+
+            }
+
+
+          // push to the messages list
+          this.listOfMessages.set([...this.listOfMessages(), messageFromEvent])
+
+
 
         }) //broker recieves this message and sends it to all the connected users
 
@@ -106,9 +121,7 @@ export class Chat implements OnInit {
     this.isConnected.update((status) => !status)
   }
 
-
   /* ALL THE FUNCTIONS RELATED TO MESSAGES */
-
 
   onSendMessage(messageContent: string): void {
     this.message().text = messageContent
@@ -119,35 +132,8 @@ export class Chat implements OnInit {
   private allertBrokerNewUser(): void {
     this.message.set({...this.message(), sender: this.SharingDataService.sender()})
     this.message().type = 'NEW_USER_CONNECTION';
-    console.log(this.message())
     this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
-
-
-
-    //   messages = signal<MessageModel[]>([
-  //   {
-  //     id: "1",
-  //     content: "SECURE CHANNEL ESTABLISHED. AWAITING INSTRUCTIONS.",
-  //     sender: "agent",
-  //     timestamp: new Date(Date.now() - 300000),
-  //     status: "read",
-  //   },
-  //   {
-  //     id: "2",
-  //     content: "Status report requested.",
-  //     sender: "user",
-  //     timestamp: new Date(Date.now() - 240000),
-  //     status: "delivered",
-  //   },
-  //   {
-  //     id: "3",
-  //     content: "ALL SYSTEMS OPERATIONAL. READY FOR DEPLOYMENT.",
-  //     sender: "agent",
-  //     timestamp: new Date(Date.now() - 180000),
-  //     status: "read",
-  //   },
-  // ])
 
 
   //   this.messages.update((msgs) => [...msgs, newMessage])
