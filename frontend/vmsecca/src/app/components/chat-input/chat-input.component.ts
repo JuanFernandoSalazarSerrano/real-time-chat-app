@@ -36,5 +36,4 @@ export class ChatInputComponent {
   typingEvent(){
     this.userTyping.emit()
   }
-
 }

@@ -1,4 +1,4 @@
-import { Component, Input, type ElementRef, ViewChild, type AfterViewChecked, signal, effect } from "@angular/core"
+import { Component, Input, type ElementRef, ViewChild, type AfterViewChecked, signal, effect, SimpleChanges, OnChanges } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { MessageModel } from "../../models/Message"
 import { SharingData } from "../../services/sharing-data";
@@ -9,12 +9,14 @@ import { SharingData } from "../../services/sharing-data";
   imports: [CommonModule],
   templateUrl: "./chat-messages.component.html",
 })
-export class ChatMessagesComponent{
+export class ChatMessagesComponent implements OnChanges{
 
   @Input() sender = signal<string>('');
   @Input() messages: MessageModel[] = []
   @Input() isTyping = ''
-  @ViewChild("messagesContainer") private messagesContainer!: ElementRef
+
+  @ViewChild('scrollChat') comment? : ElementRef ;
+  scrolltop:number=0;
 
   // Safe color palette using Tailwind 300 colors (bright enough for black background)
   private readonly SAFE_COLORS: { [key: string]: string } = {
@@ -50,7 +52,26 @@ export class ChatMessagesComponent{
   );
 }
 
+ngOnChanges(changes: SimpleChanges) {
 
+    if (changes['messages']) {
+          setTimeout(()=>{
+        if(this.comment !== undefined){
+            this.scrolltop = this.comment.nativeElement.scrollHeight;
+        }
+    },100);
+    }
+
+    if (changes['isTyping']) {
+        setTimeout(()=>{
+      if(this.comment !== undefined){
+          this.scrolltop = this.comment.nativeElement.scrollHeight;
+      }
+  },100);
+  }
+
+
+  }
 
   getMessageColor(color?: string): string {
     if (!color) {
