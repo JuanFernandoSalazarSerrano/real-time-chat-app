@@ -6,7 +6,7 @@ import { Router, RouterOutlet } from '@angular/router';
 @Component({
 
   selector: 'app-login',
-  imports: [FormsModule, RouterOutlet],
+  imports: [FormsModule],
   templateUrl: './login.html'
 
 })

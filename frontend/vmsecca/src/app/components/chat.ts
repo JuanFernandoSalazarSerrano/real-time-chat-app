@@ -30,8 +30,14 @@ export class Chat implements OnInit {
 
   isTyping = signal<string>('')
 
+  username = signal<string>('')
 
-  constructor(private readonly SharingDataService: SharingData) {}
+
+  constructor(private readonly SharingDataService: SharingData) {
+
+    this.username.set(SharingDataService.sender());
+
+  }
 
   ngOnInit(): void {
 
@@ -91,12 +97,20 @@ export class Chat implements OnInit {
 
       })
 
+      this.client.subscribe(`/topic/messageHistory/${this.username()}`, (event) => {
+        const history = JSON.parse(event.body) as MessageModel[]
+        this.listOfMessages.set(history.reverse())
+      })
+
+      this.client.publish({destination: '/app/messageHistory', body: this.username()})
 
       };
 
       this.client.onDisconnect = (frames) => {
         console.log('Disonnected: ' + !this.client.connected + ':' + frames);
         this.isConnected.set(false);
+        this.message.set(testMessage);
+        this.listOfMessages.set([]);
       };
 
     } catch (error) {

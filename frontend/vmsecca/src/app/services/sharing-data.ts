@@ -4,6 +4,6 @@ import { EventEmitter, Injectable, signal } from '@angular/core';
 
 export class SharingData {
 
-  sender = signal<string>('');
+  sender = signal<string>('nosender');
 
 }
