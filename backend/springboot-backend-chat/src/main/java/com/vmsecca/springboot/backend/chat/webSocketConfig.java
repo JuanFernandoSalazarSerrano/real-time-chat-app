@@ -17,7 +17,7 @@ public class webSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat-websocket")
+        registry.addEndpoint("/chat-websocket") // url route to the broker
             .setAllowedOrigins(allowedOriginsForCors.split(","))
             .withSockJS();
     }
@@ -25,14 +25,14 @@ public class webSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
 
-        // STOMP messages whose destination header begins with /app are routed to
-        // @MessageMapping methods in @Controller classes
-
-        config.setApplicationDestinationPrefixes("/app");
-
         // Use the built-in message broker for subscriptions and broadcasting and
         // route messages whose destination header begins with /topic or /queue to the broker
         
         config.enableSimpleBroker("/topic/"); // path-like strings where /topic/.. implies publish-subscribe (one-to-many)
+
+        // STOMP messages whose destination header begins with /app are routed to
+        // @MessageMapping methods in @Controller classes
+
+        config.setApplicationDestinationPrefixes("/app");
     }
 }

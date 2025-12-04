@@ -61,7 +61,7 @@ export class Chat implements OnInit {
         // send message to broker onConnect to all users of new user connection to the chat
         this.allertBrokerNewUser();
 
-        // subscribe to chat event
+        // subscribe to chat event, broker recieves this message ->  sends it to all the connected users
         this.client.subscribe('/topic/message', (event) => {
 
           const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
@@ -74,17 +74,12 @@ export class Chat implements OnInit {
             && this.SharingDataService.sender() == messageFromEvent.sender){
 
               this.message.set({...this.message(), color: messageFromEvent.color})
-
             }
-
 
           // push to the messages list
           this.listOfMessages.set([...this.listOfMessages(), messageFromEvent])
-
-
-
         }
-      ) //broker recieves this message and sends it to all the connected users
+      )
 
       this.client.subscribe('/topic/typing', (event) => {
 
