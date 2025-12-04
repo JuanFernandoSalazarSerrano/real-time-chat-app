@@ -3,10 +3,12 @@ package com.vmsecca.springboot.backend.chat.models.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.vmsecca.springboot.backend.chat.models.dao.chatDao;
 import com.vmsecca.springboot.backend.chat.models.documents.Message;
 
+@Service
 public class chatServiceImp implements chatService {
 
     @Autowired

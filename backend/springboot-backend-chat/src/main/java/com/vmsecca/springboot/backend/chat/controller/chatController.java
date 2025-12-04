@@ -54,8 +54,7 @@ public class chatController {
 
 
 	@MessageMapping("/messageHistory")
-	@SendTo("/topic/messageHIstory")
 	public void messageHistory(String username){
-		webSocket.convertAndSend("/topic/messageHIstory/" + username, chatService.getLast10Messages());
+		webSocket.convertAndSend("/topic/messageHistory/" + username, chatService.getLast10Messages());
 	}
 }
