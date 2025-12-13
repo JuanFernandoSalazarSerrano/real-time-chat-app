@@ -17,22 +17,28 @@ public class webSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat-websocket") // url route to the broker
+
+        // Registers the endpoint that clients connect to in order to initiate the WebSocket (or SockJS fallback) handshake.
+        // The client will open a connection to /chat-websocket to begin the STOMP session.
+            registry.addEndpoint("/chat-websocket")
             .setAllowedOrigins(allowedOriginsForCors.split(","))
+
+            // Enables SockJS as a fallback transport for environments where native WebSockets
+            // are blocked or unavailable (e.g., older browsers, restrictive proxies).
             .withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
 
-        // Use the built-in message broker for subscriptions and broadcasting and
-        // route messages whose destination header begins with /topic or /queue to the broker
-        
-        config.enableSimpleBroker("/topic/"); // path-like strings where /topic/.. implies publish-subscribe (one-to-many)
-
-        // STOMP messages whose destination header begins with /app are routed to
-        // @MessageMapping methods in @Controller classes
-
+        // Messages sent to destinations starting with /app are routed to @MessageMapping
+        // controller methods. Think of /app as the "client → server" path.
         config.setApplicationDestinationPrefixes("/app");
+
+        // Enables an in-memory message broker that handles destinations starting with /topic.
+        // These destinations support publish–subscribe behavior: messages sent there
+        // are broadcast to all clients subscribed to the topic.
+        config.enableSimpleBroker("/topic/");
     }
+
 }

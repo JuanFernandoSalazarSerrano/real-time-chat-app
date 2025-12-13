@@ -41,6 +41,7 @@ export class Chat implements OnInit {
 
   ngOnInit(): void {
 
+    // start of the handshake for WebSocket/SockJS.
     this.client.webSocketFactory = () => {
       return new SocksJS(`${URL_WEBSOCKET}/chat-websocket`);
     }
