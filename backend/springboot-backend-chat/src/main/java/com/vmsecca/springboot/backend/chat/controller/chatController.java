@@ -11,10 +11,7 @@ import org.springframework.stereotype.Controller;
 
 import com.vmsecca.springboot.backend.chat.models.Colors;
 import com.vmsecca.springboot.backend.chat.models.documents.Message;
-import com.vmsecca.springboot.backend.chat.models.documents.User;
 import com.vmsecca.springboot.backend.chat.models.service.chatService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller // this class is a component and a controller (stereotype annotation / bussiness logic bean and allow spring mvc do the job)
@@ -60,10 +57,5 @@ public class chatController {
 		webSocket.convertAndSend("/topic/messageHistory/" + username, chatService.getLast10Messages());
 	}
 
-	@PostMapping("/vmseca")
-	public User findUserByUsername(@RequestBody String username) {
-		System.out.println(username);		
-		return chatService.findByUsername(username);
-	}
 	
 }

@@ -1,9 +1,12 @@
 package com.vmsecca.springboot.backend.chat.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.vmsecca.springboot.backend.chat.models.documents.User;
@@ -17,9 +20,7 @@ public class userController {
 	private chatService chatService;
 
     @GetMapping("/vmseca")
-    public User findByUsername(@RequestParam String name) {
-        return chatService.findByUsername("james");
+    public ResponseEntity<Iterable<User>> findByUsername(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(chatService.findAllUsers());
     }
-    
-
 }

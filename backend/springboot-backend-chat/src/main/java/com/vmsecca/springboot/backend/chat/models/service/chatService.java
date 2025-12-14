@@ -9,6 +9,6 @@ public interface chatService {
 
     public List<Message> getLast10Messages();
     public Message save(Message message);
-    public User findByUsername(String username);
+    public Iterable<User> findAllUsers();
 
 }

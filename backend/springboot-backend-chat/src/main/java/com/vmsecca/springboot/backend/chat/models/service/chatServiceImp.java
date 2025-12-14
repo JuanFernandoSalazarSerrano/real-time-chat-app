@@ -31,8 +31,12 @@ public class chatServiceImp implements chatService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Iterable<User> findAllUsers() {
+        return userRepository.findAllUsers();
     }
+
+    
+
+    
 
 }
