@@ -10,6 +10,7 @@ import { ChatInputComponent } from './chat-input/chat-input.component';
 import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
 import { MessageModel } from '../models/Message';
 import { testMessage } from '../data/testmessage';
+import { AES } from 'crypto-ts';
 
 @Component({
   selector: 'app-chat',
@@ -145,7 +146,8 @@ export class Chat implements OnInit {
   /* ALL THE FUNCTIONS RELATED TO MESSAGES OR SENDING MESSAGES TO THE BROKER */
 
   onSendMessage(messageContent: string): void {
-    this.message().text = messageContent
+    const encrypted = AES.encrypt(messageContent, 'secret key 123').toString();
+    this.message().text = encrypted
     this.message().type = 'NEW_MESSAGE'
     this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
