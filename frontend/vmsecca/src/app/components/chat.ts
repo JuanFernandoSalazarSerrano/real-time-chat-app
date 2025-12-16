@@ -10,7 +10,7 @@ import { ChatInputComponent } from './chat-input/chat-input.component';
 import { ChatMessagesComponent } from './chat-messages/chat-messages.component';
 import { MessageModel } from '../models/Message';
 import { testMessage } from '../data/testmessage';
-import { AES } from 'crypto-ts';
+import { AES, enc } from 'crypto-ts';
 
 @Component({
   selector: 'app-chat',
@@ -71,8 +71,13 @@ export class Chat implements OnInit {
 
         // subscribe to chat event, broker recieves this message ->  sends it to all the connected users
         this.client.subscribe('/topic/message', (event) => {
+          // decrypt
 
-          const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
+          var messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
+          console.log(messageFromEvent,'1')
+          var bytes  = AES.decrypt(messageFromEvent.text.toString(), 'secret key 123');
+          messageFromEvent.text = bytes.toString(enc.Utf8);
+          console.log(messageFromEvent, '2')
 
           //We want to work with our angular version of the message, not with what springboot directly gives us, so:
           // this.message.set(messageFromEvent);
@@ -146,8 +151,11 @@ export class Chat implements OnInit {
   /* ALL THE FUNCTIONS RELATED TO MESSAGES OR SENDING MESSAGES TO THE BROKER */
 
   onSendMessage(messageContent: string): void {
+
+    //encryption
     const encrypted = AES.encrypt(messageContent, 'secret key 123').toString();
     this.message().text = encrypted
+
     this.message().type = 'NEW_MESSAGE'
     this.client.publish({ destination: '/app/message', body: JSON.stringify(this.message())});
   }
