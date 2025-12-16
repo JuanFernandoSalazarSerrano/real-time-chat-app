@@ -62,8 +62,12 @@ export class ChatHeaderComponent {
 
   currentTime = new Date()
 
-
-
+  ngOnInit(): void {
+    // Update time every second
+    setInterval(() => {
+      this.currentTime = new Date()
+    }, 1000)
+  }
 
   onDisconnect(): void {
     this.toggleConnection.emit()

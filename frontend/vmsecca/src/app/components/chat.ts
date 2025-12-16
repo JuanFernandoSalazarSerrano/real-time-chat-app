@@ -71,13 +71,11 @@ export class Chat implements OnInit {
 
         // subscribe to chat event, broker recieves this message ->  sends it to all the connected users
         this.client.subscribe('/topic/message', (event) => {
-          // decrypt
 
+          // decrypt
           var messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
-          console.log(messageFromEvent,'1')
           var bytes  = AES.decrypt(messageFromEvent.text.toString(), 'secret key 123');
           messageFromEvent.text = bytes.toString(enc.Utf8);
-          console.log(messageFromEvent, '2')
 
           //We want to work with our angular version of the message, not with what springboot directly gives us, so:
           // this.message.set(messageFromEvent);
@@ -85,7 +83,6 @@ export class Chat implements OnInit {
           // assign color to new user (the message of the new user)
           if(messageFromEvent.type == 'NEW_USER_CONNECTION'
             && this.SharingDataService.sender() == messageFromEvent.sender){
-
               this.message.set({...this.message(), color: messageFromEvent.color})
             }
 
@@ -105,9 +102,25 @@ export class Chat implements OnInit {
       })
 
       this.client.subscribe(`/topic/messageHistory/${this.username()}`, (event) => {
-        const history = JSON.parse(event.body) as MessageModel[]
-        this.listOfMessages.set(history.reverse())
-      })
+        const history = JSON.parse(event.body) as MessageModel[];
+
+        history.forEach(message => {
+          try {
+            const bytes = AES.decrypt(message.text, 'secret key 123');
+            const decrypted = bytes.toString(enc.Utf8);
+
+            // Only replace if decryption actually succeeded
+            if (decrypted && decrypted.length > 0) {
+              message.text = decrypted;
+            }
+          } catch (e) {
+            // swallow error → message is already plaintext or malformed
+          }
+        });
+
+        this.listOfMessages.set(history.reverse());
+      });
+
 
       this.client.publish({destination: '/app/messageHistory', body: this.username()})
 
