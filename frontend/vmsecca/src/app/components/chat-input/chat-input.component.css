@@ -2,13 +2,13 @@
   display: block;
 }
 
-/* Remove browser default styles for input */
-input:focus {
+/* Remove browser default styles for input and textarea */
+input:focus, textarea:focus {
   outline: none;
 }
 
 /* Tactical cursor blink */
-input::placeholder {
+input::placeholder, textarea::placeholder {
   animation: placeholderBlink 2s infinite;
 }
 

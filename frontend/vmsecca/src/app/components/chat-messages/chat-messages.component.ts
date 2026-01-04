@@ -14,6 +14,7 @@ export class ChatMessagesComponent implements OnChanges{
   @Input() sender = signal<string>('');
   @Input() messages: MessageModel[] = []
   @Input() isTyping = ''
+  constantSender: string = ''
 
   @ViewChild('scrollChat') comment? : ElementRef ;
   scrolltop:number=0;
@@ -48,6 +49,11 @@ export class ChatMessagesComponent implements OnChanges{
   effect(() => {
     console.log('sender changed:', this.SharingDataService.sender());
     this.sender.set(this.SharingDataService.sender());
+
+    if (this.constantSender == ''){
+      this.constantSender = this.SharingDataService.sender();
+    }
+
     }
   );
 }

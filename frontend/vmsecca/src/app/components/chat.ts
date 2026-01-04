@@ -72,13 +72,14 @@ export class Chat implements OnInit {
         // subscribe to chat event, broker recieves this message ->  sends it to all the connected users
         this.client.subscribe('/topic/message', (event) => {
 
-          // decrypt
+          // decrypt only messages of type NEW_MESSAGE, this are the only ones encrypted
           var messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
-          var bytes  = AES.decrypt(messageFromEvent.text.toString(), 'secret key 123');
-          messageFromEvent.text = bytes.toString(enc.Utf8);
 
-          //We want to work with our angular version of the message, not with what springboot directly gives us, so:
-          // this.message.set(messageFromEvent);
+          if (messageFromEvent.type != "NEW_USER_CONNECTION") {
+            var bytes  = AES.decrypt(messageFromEvent.text.toString(), 'secret key 123');
+            var decrypted = bytes.toString(enc.Utf8);
+            messageFromEvent.text = decrypted;
+          }
 
           // assign color to new user (the message of the new user)
           if(messageFromEvent.type == 'NEW_USER_CONNECTION'
@@ -93,11 +94,11 @@ export class Chat implements OnInit {
 
       this.client.subscribe('/topic/typing', (event) => {
 
-        const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name could be messageFromeSpringboot
+        const messageFromEvent: MessageModel = JSON.parse(event.body) as MessageModel; // other name for this variable could be messageFromSpringboot
 
         this.isTyping.set(event.body);
         this.SharingDataService.sender.set(messageFromEvent.sender);
-        setTimeout(() => {this.isTyping.set('')}, 4000)
+        setTimeout(() => {this.isTyping.set('')}, 2000)
 
       })
 

@@ -64,16 +64,16 @@
 
       @else {
         <!-- im sorry for doing this idk css let me fast trick this for now -->
-      <div class="flex" [class.justify-end]="message.sender === 'user'">
+      <div class="flex" [class.justify-end]="message.sender === 'user' || message.sender === constantSender">
         <div
           class="max-w-2xl"
           [class.w-full]="message.sender === 'BROKER'"
         >
           <!-- Message Header -->
-          <div
-            class="flex items-center gap-2 mb-2"
-            [class.justify-end]="message.sender === 'BROKER'"
-          >
+        <div
+          class="flex items-center gap-2 mb-2"
+          [class.justify-end]="message.sender === 'BROKER' || message.sender === constantSender"
+        >
               @if (message.sender === 'BROKER') {
               <span class="text-zinc-500 font-mono text-xs uppercase tracking-wider">
                 [ BROKER ]

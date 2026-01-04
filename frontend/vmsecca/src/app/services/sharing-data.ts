@@ -6,4 +6,5 @@ export class SharingData {
 
   sender = signal<string>('nosender');
 
+
 }

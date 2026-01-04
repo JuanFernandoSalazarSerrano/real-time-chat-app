@@ -50,12 +50,13 @@ export class ChatHeaderComponent {
     return this.SAFE_COLORS[normalizedColor] || this.SAFE_COLORS['amber']
   }
 
-
   constructor(private readonly SharingDataService: SharingData){
 
   effect(() => {
-    console.log('sender changed:', this.SharingDataService.sender());
-    this.sender.set(this.SharingDataService.sender());
+    if (this.sender() == '') {
+        console.log('sender changed 1:', this.SharingDataService.sender());
+        this.sender.set(this.SharingDataService.sender());
+      }
     }
   );
 }

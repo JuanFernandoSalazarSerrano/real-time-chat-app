@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, Input, signal } from "@angular/core"
+import { Component, Output, EventEmitter, Input, signal, ElementRef, ViewChild } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormsModule } from "@angular/forms"
 
@@ -14,6 +14,8 @@ export class ChatInputComponent {
   @Output() sendMessage = new EventEmitter<string>()
   @Output() userTyping = new EventEmitter<boolean>()
 
+  @ViewChild('messageInput') messageInput!: ElementRef<HTMLTextAreaElement>;
+
   messageContent = signal<string>("")
 
   onSend(): void {
@@ -23,6 +25,7 @@ export class ChatInputComponent {
     if (content && !this.disabled) {
       this.sendMessage.emit(content)
       this.messageContent.set("")
+      this.adjustHeight(); // Reset height after sending
     }
   }
 
@@ -35,5 +38,11 @@ export class ChatInputComponent {
 
   typingEvent(){
     this.userTyping.emit()
+  }
+
+  adjustHeight(event?: Event): void {
+    const textarea = this.messageInput.nativeElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
   }
 }
