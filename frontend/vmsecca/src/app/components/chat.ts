@@ -98,7 +98,7 @@ export class Chat implements OnInit {
 
         this.isTyping.set(event.body);
         this.SharingDataService.sender.set(messageFromEvent.sender);
-        setTimeout(() => {this.isTyping.set('')}, 2000)
+        setTimeout(() => {this.isTyping.set('')}, 4100)
 
       })
 

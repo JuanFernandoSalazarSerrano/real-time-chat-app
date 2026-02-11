@@ -36,7 +36,7 @@ public class chatController {
 
 		else{
 		message.setDate(new Date().getTime());
-		message.setText("Handled by the broker: " + message.getText());
+		message.setText(message.getText());
 		}
 
 		chatService.save(message);
